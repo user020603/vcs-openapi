@@ -1,0 +1,189 @@
+basePath: /api/v1
+definitions:
+  model.CreateProductRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    required:
+    - name
+    - price
+    type: object
+  model.ProductResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  model.UpdateProductRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: A simple CRUD API built with Go Gin, PostgreSQL, and Swagger
+  title: Go Gin CRUD API
+  version: "1.0"
+paths:
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.ProductResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get all products
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Create a new product with the provided information
+      parameters:
+      - description: Product information
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.ProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a new product
+      tags:
+      - products
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a product by its ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a product
+      tags:
+      - products
+    get:
+      consumes:
+      - application/json
+      description: Get a product by its ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ProductResponse'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get a product by ID
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: Update a product with the provided information
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Product information
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update a product
+      tags:
+      - products
+swagger: "2.0"
