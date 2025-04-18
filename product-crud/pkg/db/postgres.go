@@ -32,7 +32,6 @@ func Connect() (*sql.DB, error) {
 	return db, nil
 }
 
-// InitSchema creates necessary tables if they don't exist
 func InitSchema(db *sql.DB) error {
 	query := `
 	CREATE TABLE IF NOT EXISTS products (

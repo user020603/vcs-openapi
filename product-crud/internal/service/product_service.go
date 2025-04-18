@@ -91,7 +91,6 @@ func (s *ProductService) Update(id int, req *model.UpdateProductRequest) (*model
 		return nil, nil // Product not found
 	}
 
-	// Update only the fields that are provided
 	if req.Name != "" {
 		existingProduct.Name = req.Name
 	}

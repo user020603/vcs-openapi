@@ -1,8 +1,10 @@
 package routes
 
 import (
-	"product-crud/api/middleware"
+	"net/http"
+	"product-crud/api/middlewares"
 	"product-crud/internal/delivery/rest"
+	"product-crud/pkg/logger"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -12,12 +14,15 @@ import (
 func SetupRouter(productHandler *rest.ProductHandler) *gin.Engine {
 	router := gin.Default()
 
-	router.Use(middleware.CORS())
-	router.Use(middleware.Logger())
-	router.Use(middleware.RequestID())
+	logger := logger.NewLogger("info")
+
+	router.Use(middlewares.CORSMiddleware())
+	router.Use(middlewares.LoggingMiddleware(logger))
+	router.Use(middlewares.RequestIDMiddleware())
+	router.Use(middlewares.RecoveryMiddleware(logger))
 
 	router.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"status": "OK",
 		})
 	})
