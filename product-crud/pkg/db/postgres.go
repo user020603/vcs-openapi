@@ -1,30 +1,36 @@
 package db
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
+	"product-crud/internal/model"
 
-	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func Connect() (*sql.DB, error) {
+func Connect() (*gorm.DB, error) {
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
 
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 
-	db, err := sql.Open("postgres", connStr)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 
-	if err := db.Ping(); err != nil {
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := sqlDB.Ping(); err != nil {
 		return nil, err
 	}
 
@@ -32,18 +38,8 @@ func Connect() (*sql.DB, error) {
 	return db, nil
 }
 
-func InitSchema(db *sql.DB) error {
-	query := `
-	CREATE TABLE IF NOT EXISTS products (
-		id SERIAL PRIMARY KEY,
-		name VARCHAR(100) NOT NULL,
-		description TEXT,
-		price DECIMAL(10, 2) NOT NULL,
-		created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-		updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-	);`
-
-	_, err := db.Exec(query)
+func InitSchema(db *gorm.DB) error {
+	err := db.AutoMigrate(&model.Product{})
 	if err != nil {
 		return err
 	}

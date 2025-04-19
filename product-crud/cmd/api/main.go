@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"product-crud/api/routes"
-	_ "product-crud/docs" // This is required for swagger
+	_ "product-crud/docs" 
 	"product-crud/internal/delivery/rest"
 	"product-crud/internal/repository"
 	"product-crud/internal/service"
@@ -28,7 +28,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	defer database.Close()
 
 	if err := db.InitSchema(database); err != nil {
 		log.Fatalf("Failed to initialize database schema: %v", err)
