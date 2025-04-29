@@ -6,6 +6,7 @@ import (
 	"product-crud/internal/model"
 	"product-crud/internal/repository"
 	"product-crud/pkg/cache"
+	"product-crud/pkg/logger"
 )
 
 const (
@@ -16,12 +17,14 @@ const (
 type ProductService struct {
 	repo  *repository.ProductRepository
 	cache *cache.RedisCache
+	logger *logger.Logger
 }
 
-func NewProductService(repo *repository.ProductRepository, cache *cache.RedisCache) *ProductService {
+func NewProductService(repo *repository.ProductRepository, cache *cache.RedisCache, logger *logger.Logger) *ProductService {
 	return &ProductService{
 		repo:  repo,
 		cache: cache,
+		logger: logger,
 	}
 }
 
@@ -71,6 +74,7 @@ func (s *ProductService) GetByID(ctx context.Context, id int) (*model.ProductRes
 	}
 	
 	if found {
+		s.logger.Info("Cache hit for product ID %d", id)
 		return &product, nil
 	}
 	
@@ -107,6 +111,7 @@ func (s *ProductService) GetAll(ctx context.Context) ([]*model.ProductResponse, 
 	}
 	
 	if found && len(cachedProducts) > 0 {
+		s.logger.Info("Cache hit for all products")
 		return cachedProducts, nil
 	}
 	

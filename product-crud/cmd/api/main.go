@@ -12,6 +12,7 @@ import (
 	"product-crud/internal/service"
 	"product-crud/pkg/cache"
 	"product-crud/pkg/db"
+	"product-crud/pkg/logger"
 
 	"github.com/joho/godotenv"
 )
@@ -35,6 +36,8 @@ func main() {
 		log.Fatalf("Failed to initialize database schema: %v", err)
 	}
 
+	logger := logger.NewLogger("info")
+
 	// Initialize Redis cache
 	redisHost := getEnv("REDIS_HOST", "localhost")
 	redisPort := getEnv("REDIS_PORT", "6379")
@@ -48,7 +51,7 @@ func main() {
 	}
 
 	productRepo := repository.NewProductRepository(database)
-	productService := service.NewProductService(productRepo, redisCache)
+	productService := service.NewProductService(productRepo, redisCache, logger)
 	productHandler := rest.NewProductHandler(productService)
 
 	router := routes.SetupRouter(productHandler)
