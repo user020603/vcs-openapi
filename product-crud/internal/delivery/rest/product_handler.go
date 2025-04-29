@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"context"
 	"net/http"
 	"product-crud/internal/model"
 	"product-crud/internal/service"
@@ -37,7 +38,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	product, err := h.service.Create(&req)
+	product, err := h.service.Create(context.Background(), &req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -64,7 +65,7 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 		return
 	}
 
-	product, err := h.service.GetByID(id)
+	product, err := h.service.GetByID(context.Background(), id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -87,7 +88,7 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 // @Failure 500 {string} string "Internal Server Error"
 // @Router /products [get]
 func (h *ProductHandler) GetProducts(c *gin.Context) {
-	products, err := h.service.GetAll()
+	products, err := h.service.GetAll(context.Background())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -122,7 +123,7 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 		return
 	}
 
-	product, err := h.service.Update(id, &req)
+	product, err := h.service.Update(context.Background(), id, &req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -153,7 +154,7 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	err = h.service.Delete(id)
+	err = h.service.Delete(context.Background(), id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
